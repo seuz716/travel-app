@@ -15,7 +15,7 @@ const pinSchema = new mongoose.Schema({
         max:50,
         unique:true
     },
-    description:{
+    desc:{
         type:String,
         require:true,
         min:6,

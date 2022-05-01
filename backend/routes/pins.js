@@ -1,27 +1,18 @@
-const mongoose = require ("mongoose");
+const router = require("express").Router();
+const Pin = require("../models/Pin.js");
 
-const PinSchema = new mongoose.Schema({
-    username:{
-        type:String,
-        require: true,
-        unique:true,
-        min:3
-    },
-    descripcion:{
-        type:String,
-        require: true,
-        min:5,
-        unique:true
-    },
-    rating:{
-        type:String,
-        require: true,
-        max:6,
-        min:0,
-        unique:true
+//create a pin
+
+router.post("/", async (req, res)=>{
+    const newPin = new Pin(req.body)
+    try {
+        const savedPin = await newPin.save();
+        res.status(200).json(savedPin);
+    } catch (error) {
+        res.status(500).json(error);
     }
-},
-    {timestamp:true}
-);
+})
 
-module.exports = mongoose.model("Pin", PinSchema)
+// get all pins
+
+module.exports = router;
