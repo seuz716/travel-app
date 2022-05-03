@@ -1,26 +1,37 @@
 const express = require("express");
-const dotenv = require("dotenv");
-const mongoose =  require('mongoose');
 const app = express();
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const userRoute = require("./routes/users");
 const pinRoute = require("./routes/pins");
 
 dotenv.config();
 
-app.use(express.json);
- 
-main().catch(err => console.log(err));
+app.use(express.json());
 
-async function main() {
-  await mongoose.connect(process.env.MONGODB_URL);
-  console.log("bd is conected");
-}
+const uri = process.env.ATLAS_CONNECTION;
+    mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: 
+    true });
 
-app.post("pins");
-
-app.use("/api/pins", pinRoute)
-
-app.listen(8080, () =>{
-    console.log("Backend service is running");
-})
+    const connection = mongoose.connection;
 
 
+    try{
+    connection.once('open', () => {
+        console.log("MongoDB database connection established successfully");
+    })
+    } catch(e) {
+    console.log(e);
+    }
+
+   function close_connection() {
+    connection.close();
+   }
+
+
+app.use("/api/users", userRoute);
+app.use("/api/pins", pinRoute);
+
+app.listen(3000, () => {
+  console.log("Backend server is running!");
+});
